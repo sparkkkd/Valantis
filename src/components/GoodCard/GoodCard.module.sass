@@ -1,0 +1,32 @@
+@import '../../const.sass'
+
+.goodsWrapper
+  display: grid
+  grid-template-columns: repeat(3, 3fr)
+  gap: 20px
+
+.goodCard
+  padding: 5px
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  background-color: $goodCardColor
+  border-radius: 5px
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, .5)
+  div
+    margin-bottom: 20px
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    &:last-child
+      margin-bottom: 0px
+
+.goodTitle
+  margin-bottom: 5px
+  font-size: 20px
+
+.goodSub
+  font-size: 14px
+  text-align: center
