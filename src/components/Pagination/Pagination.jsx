@@ -9,14 +9,18 @@ export default function PaginationComponent() {
 	const [totalPages, setTotalPages] = useState(products.length)
 	const [currentPage, setCurrentPage] = useState(1)
 
+	// useEffect(() => {
+	// 	const itemsPerPage = 9
+	// 	const test = (currentPage - 1) * itemsPerPage
+	// 	dispatch(fetchPagination({ offset, limit: itemsPerPage }))
+	// }, [])
+
 	useEffect(() => {
-		const itemsPerPage = 9
-		const offset = (currentPage - 1) * itemsPerPage
-		dispatch(fetchPagination({ offset, limit: itemsPerPage }))
+		dispatch(fetchPagination({ offset: 9, limit: 9 }))
 	}, [])
 
-	function onChange(page) {
-		setCurrentPage(page)
+	function onChange(offset, limit) {
+		dispatch(fetchPagination({ offset, limit }))
 	}
 
 	return (
@@ -36,10 +40,10 @@ export default function PaginationComponent() {
 		>
 			<Pagination
 				defaultCurrent={1}
-				total={totalPages}
+				total={50}
 				defaultPageSize={9}
 				style={{ textAlign: 'center' }}
-				onChange={onChange}
+				onChange={() => onChange(9, 9)}
 			/>
 		</ConfigProvider>
 	)

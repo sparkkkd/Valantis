@@ -20,7 +20,7 @@ export const fetchPagination = createAsyncThunk(
 	'goods/fetchPagination',
 	async ({ offset, limit }, { rejectWithValue }) => {
 		try {
-			const goods = await fetch('http://api.valantis.store:40000/', {
+			const goodsIds = await fetch('http://api.valantis.store:40000/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -32,9 +32,31 @@ export const fetchPagination = createAsyncThunk(
 				}),
 			})
 
-			return await goods.json()
+			const { result } = await goodsIds.json()
+
+			const goods = await fetch('http://api.valantis.store:40000/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Auth': authorizationString,
+				},
+				body: JSON.stringify({
+					action: 'get_items',
+					params: { ids: result },
+				}),
+			})
+
+			return await goods.json().then((data) => data.result)
+			// const goodsResult = await goods.result.json()
+
+			// console.log(goodsResult)
+
+			// const allGoods = await goods.json()
+			// console.log(allGoods)
+
+			// return allGoods
 		} catch (error) {
-			rejectWithValue(error)
+			return rejectWithValue(error.message)
 		}
 	}
 )
@@ -97,7 +119,7 @@ export const fetchBrands = createAsyncThunk(
 			const result = await getAllBrands.json()
 			return result
 		} catch (error) {
-			rejectWithValue(error)
+			rejectWithValue(error.message)
 		}
 	}
 )
@@ -173,15 +195,22 @@ const goodsSlice = createSlice({
 		// Fetch pagination
 		builder.addCase(fetchPagination.pending, (state, action) => {})
 		builder.addCase(fetchPagination.fulfilled, (state, action) => {
-			action.payload.reduce(
-				(acc, n) => ((acc[n.id] = n.brand ? n : acc[n.id] || n), acc),
-				{}
+			const result = Object.values(
+				action.payload.reduce(
+					(acc, n) => ((acc[n.id] = n.brand ? n : acc[n.id] || n), acc),
+					{}
+				)
 			)
-			state.goods = action.payload
-			state.currentGoods = action.payload
+
+			state.goods = result
+			state.currentGoods = result
+			console.log(action.payload)
 		})
 		builder.addCase(fetchPagination.rejected, (state, action) => {
-			console.log(action.payload.error)
+			// if (action.error) {
+			// 	console.log(action.error.message);
+			// }
+			console.log(action.error)
 		})
 	},
 })

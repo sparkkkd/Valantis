@@ -10,10 +10,11 @@ import PaginationComponent from '../Pagination/Pagination'
 export default function GoodCard() {
 	const dispatch = useDispatch()
 
-	useEffect(() => {
-		dispatch(fetchPagination())
-		// dispatch(fetchGoods())
-	}, [])
+	// useEffect(() => {
+	// 	dispatch(fetchPagination({ offset: 0, limit: 9 }))
+	// 	dispatch(fetchGoods())
+	// }, [])
+
 	const { currentGoods, isLoading } = useSelector((state) => state.goods)
 
 	return (
