@@ -1,0 +1,56 @@
+@import '../../const'
+
+.filter
+  padding: 10px
+  position: absolute
+  left: 0
+  display: flex
+  width: 600px
+  height: 200px
+  background-color: #150F2B
+  border-radius: 5px
+  box-shadow: 6px 4px 8px rgba(0, 0, 0, 0.5)
+  div
+    font-size: 24px
+    margin-right: 40px
+    display: flex
+    flex-direction: column
+    &:last-child
+      margin-right: 0px
+    &:nth-child(2n)
+      width: 100%
+
+.filterTitle
+  margin-bottom: 15px
+
+.filterItem
+  margin-bottom: 5px
+  font-size: 18px
+  transition: color .3s
+  cursor: pointer
+  &:last-child
+    margin-bottom: 0px
+  &:hover
+    color: $goodCardColor
+
+.filterClose
+  position: absolute
+  right: 10px
+  top: 10px
+  font-size: 32px
+  cursor: pointer
+  transition: color .3s
+  &:hover
+    color: $goodCardColor
+
+.filterSearch
+  margin-top: auto
+  padding: 5px
+  width: 100%
+  font-size: 20px
+  color: $fontColor
+  background-color: $goodCardColor
+  border: none
+  outline: none
+  text-align: center
+  border-radius: 5px

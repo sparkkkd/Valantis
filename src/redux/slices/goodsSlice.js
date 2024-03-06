@@ -9,11 +9,36 @@ const authorizationString = CryptoJS.MD5(data).toString()
 
 const initialState = {
 	goods: [],
+	currentGoods: [],
+	brands: [],
 	isLoading: false,
 	isError: false,
 }
 
-// Get all IDs
+// Test fetch
+
+export const fetchPagination = createAsyncThunk(
+	'goods/fetchPagination',
+	async ({ limit }, { rejectWithValue }) => {
+		try {
+			const goods = await fetch('http://api.valantis.store:40000/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Auth': authorizationString,
+				},
+				body: JSON.stringify({
+					action: 'get_ids',
+					params: { offset: 9, limit: 9 },
+				}),
+			})
+		} catch (error) {
+			rejectWithValue(error)
+		}
+	}
+)
+
+// Get all IDs and Products
 export const fetchGoods = createAsyncThunk(
 	'goods/fetchIds',
 	async (_, { rejectWithValue }) => {
@@ -52,11 +77,66 @@ export const fetchGoods = createAsyncThunk(
 	}
 )
 
+// Get all Brands
+export const fetchBrands = createAsyncThunk(
+	'goods/fetchBrands',
+	async (_, { rejectWithValue }) => {
+		try {
+			const getAllBrands = await fetch('http://api.valantis.store:40000/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Auth': authorizationString,
+				},
+				body: JSON.stringify({
+					action: 'get_fields',
+					params: { field: 'brand', limit: 100 },
+				}),
+			})
+			const result = await getAllBrands.json()
+			return result
+		} catch (error) {
+			rejectWithValue(error)
+		}
+	}
+)
+
 const goodsSlice = createSlice({
 	name: 'goods',
 	initialState,
-	reducers: {},
+	reducers: {
+		filter: (state, action) => {
+			// Если указан бренд
+			if (action.payload.brand) {
+				if (action.payload.brand === 'all') {
+					state.currentGoods = state.goods
+				} else {
+					state.currentGoods = state.goods.filter(
+						(good) => good.brand === action.payload.brand
+					)
+				}
+			}
+
+			// Если указана цена
+			if (action.payload.price) {
+				if (action.payload.price === 'lower') {
+					state.currentGoods = state.currentGoods.sort(
+						(a, b) => b.price - a.price
+					)
+				} else {
+					state.currentGoods = state.currentGoods.sort(
+						(a, b) => a.price - b.price
+					)
+				}
+			}
+
+			// if (action.payload.name) {
+			// 	state.currentGoods = state.currentGoods.filter(good => good.name.toLowerCase().includes())
+			// }
+		},
+	},
 	extraReducers: (builder) => {
+		// Fetch all IDs and Products
 		builder.addCase(fetchGoods.pending, (state) => {
 			state.isLoading = true
 		})
@@ -72,13 +152,24 @@ const goodsSlice = createSlice({
 			)
 
 			state.goods = result
+			state.currentGoods = result
 		})
 		builder.addCase(fetchGoods.rejected, (state, action) => {
 			state.isLoading = false
 			state.goods = []
 			console.log(action.error)
 		})
+
+		// Fetch all Brands
+		builder.addCase(fetchBrands.pending, (state, action) => {})
+		builder.addCase(fetchBrands.fulfilled, (state, action) => {
+			const { result } = action.payload
+			const brands = result.filter((item) => item != null)
+			state.brands = brands
+		})
+		builder.addCase(fetchBrands.rejected, (state, action) => {})
 	},
 })
 
+export const { filter } = goodsSlice.actions
 export default goodsSlice.reducer
