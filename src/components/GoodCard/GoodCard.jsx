@@ -1,7 +1,7 @@
 import styles from './GoodCard.module.sass'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchGoods } from '../../redux/slices/goodsSlice'
+import { fetchGoods, fetchPagination } from '../../redux/slices/goodsSlice'
 import { useEffect } from 'react'
 
 import { Spin } from 'antd'
@@ -11,7 +11,8 @@ export default function GoodCard() {
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		dispatch(fetchGoods())
+		dispatch(fetchPagination())
+		// dispatch(fetchGoods())
 	}, [])
 	const { currentGoods, isLoading } = useSelector((state) => state.goods)
 

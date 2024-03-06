@@ -1,12 +1,23 @@
 import { Pagination, ConfigProvider } from 'antd'
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchPagination } from '../../redux/slices/goodsSlice'
 
 export default function PaginationComponent() {
+	const dispatch = useDispatch()
 	const products = useSelector((state) => state.goods.goods)
 	const [totalPages, setTotalPages] = useState(products.length)
+	const [currentPage, setCurrentPage] = useState(1)
 
-	function onChange(page, pageSize) {}
+	useEffect(() => {
+		const itemsPerPage = 9
+		const offset = (currentPage - 1) * itemsPerPage
+		dispatch(fetchPagination({ offset, limit: itemsPerPage }))
+	}, [])
+
+	function onChange(page) {
+		setCurrentPage(page)
+	}
 
 	return (
 		<ConfigProvider

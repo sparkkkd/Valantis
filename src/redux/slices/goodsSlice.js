@@ -16,10 +16,9 @@ const initialState = {
 }
 
 // Test fetch
-
 export const fetchPagination = createAsyncThunk(
 	'goods/fetchPagination',
-	async ({ limit }, { rejectWithValue }) => {
+	async ({ offset, limit }, { rejectWithValue }) => {
 		try {
 			const goods = await fetch('http://api.valantis.store:40000/', {
 				method: 'POST',
@@ -29,9 +28,11 @@ export const fetchPagination = createAsyncThunk(
 				},
 				body: JSON.stringify({
 					action: 'get_ids',
-					params: { offset: 9, limit: 9 },
+					params: { offset, limit },
 				}),
 			})
+
+			return await goods.json()
 		} catch (error) {
 			rejectWithValue(error)
 		}
@@ -168,6 +169,20 @@ const goodsSlice = createSlice({
 			state.brands = brands
 		})
 		builder.addCase(fetchBrands.rejected, (state, action) => {})
+
+		// Fetch pagination
+		builder.addCase(fetchPagination.pending, (state, action) => {})
+		builder.addCase(fetchPagination.fulfilled, (state, action) => {
+			action.payload.reduce(
+				(acc, n) => ((acc[n.id] = n.brand ? n : acc[n.id] || n), acc),
+				{}
+			)
+			state.goods = action.payload
+			state.currentGoods = action.payload
+		})
+		builder.addCase(fetchPagination.rejected, (state, action) => {
+			console.log(action.payload.error)
+		})
 	},
 })
 
