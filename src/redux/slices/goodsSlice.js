@@ -47,14 +47,6 @@ export const fetchPagination = createAsyncThunk(
 			})
 
 			return await goods.json().then((data) => data.result)
-			// const goodsResult = await goods.result.json()
-
-			// console.log(goodsResult)
-
-			// const allGoods = await goods.json()
-			// console.log(allGoods)
-
-			// return allGoods
 		} catch (error) {
 			return rejectWithValue(error.message)
 		}
@@ -195,6 +187,7 @@ const goodsSlice = createSlice({
 		// Fetch pagination
 		builder.addCase(fetchPagination.pending, (state, action) => {})
 		builder.addCase(fetchPagination.fulfilled, (state, action) => {
+			// Unique ids
 			const result = Object.values(
 				action.payload.reduce(
 					(acc, n) => ((acc[n.id] = n.brand ? n : acc[n.id] || n), acc),
@@ -207,9 +200,6 @@ const goodsSlice = createSlice({
 			console.log(action.payload)
 		})
 		builder.addCase(fetchPagination.rejected, (state, action) => {
-			// if (action.error) {
-			// 	console.log(action.error.message);
-			// }
 			console.log(action.error)
 		})
 	},
