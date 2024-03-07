@@ -32,7 +32,7 @@ function App() {
 				<main>
 					<Filter />
 					<GoodCard />
-					{!isLoading && <PaginationComponent />}
+					<PaginationComponent />
 				</main>
 			</div>
 		</>

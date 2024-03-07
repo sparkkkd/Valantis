@@ -1,19 +1,11 @@
 import styles from './GoodCard.module.sass'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchGoods, fetchPagination } from '../../redux/slices/goodsSlice'
-import { useEffect } from 'react'
 
 import { Spin } from 'antd'
-import PaginationComponent from '../Pagination/Pagination'
 
 export default function GoodCard() {
 	const dispatch = useDispatch()
-
-	// useEffect(() => {
-	// 	dispatch(fetchPagination({ offset: 0, limit: 9 }))
-	// 	dispatch(fetchGoods())
-	// }, [])
 
 	const { currentGoods, isLoading } = useSelector((state) => state.goods)
 

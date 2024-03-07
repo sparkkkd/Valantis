@@ -15,7 +15,7 @@ const initialState = {
 	isError: false,
 }
 
-// Test fetch
+// Pagintaion fetch
 export const fetchPagination = createAsyncThunk(
 	'goods/fetchPagination',
 	async ({ offset, limit }, { rejectWithValue }) => {
@@ -145,36 +145,14 @@ const goodsSlice = createSlice({
 				}
 			}
 
-			// if (action.payload.name) {
-			// 	state.currentGoods = state.currentGoods.filter(good => good.name.toLowerCase().includes())
-			// }
+			if (action.payload.name) {
+				state.currentGoods = state.currentGoods.filter((good) =>
+					good.name.toLowerCase().includes(action.payload.name.toLowerCase())
+				)
+			}
 		},
 	},
 	extraReducers: (builder) => {
-		// Fetch all IDs and Products
-		builder.addCase(fetchGoods.pending, (state) => {
-			state.isLoading = true
-		})
-		builder.addCase(fetchGoods.fulfilled, (state, action) => {
-			state.isLoading = false
-
-			// Удаление из массива объекта с одинаковым ID и с пустым полем brand
-			const result = Object.values(
-				action.payload.reduce(
-					(acc, n) => ((acc[n.id] = n.brand ? n : acc[n.id] || n), acc),
-					{}
-				)
-			)
-
-			state.goods = result
-			state.currentGoods = result
-		})
-		builder.addCase(fetchGoods.rejected, (state, action) => {
-			state.isLoading = false
-			state.goods = []
-			console.log(action.error)
-		})
-
 		// Fetch all Brands
 		builder.addCase(fetchBrands.pending, (state, action) => {})
 		builder.addCase(fetchBrands.fulfilled, (state, action) => {
@@ -185,7 +163,9 @@ const goodsSlice = createSlice({
 		builder.addCase(fetchBrands.rejected, (state, action) => {})
 
 		// Fetch pagination
-		builder.addCase(fetchPagination.pending, (state, action) => {})
+		builder.addCase(fetchPagination.pending, (state, action) => {
+			state.isLoading = true
+		})
 		builder.addCase(fetchPagination.fulfilled, (state, action) => {
 			// Unique ids
 			const result = Object.values(
@@ -197,9 +177,12 @@ const goodsSlice = createSlice({
 
 			state.goods = result
 			state.currentGoods = result
+			state.isLoading = false
 			console.log(action.payload)
 		})
 		builder.addCase(fetchPagination.rejected, (state, action) => {
+			state.isLoading = false
+			state.isError = true
 			console.log(action.error)
 		})
 	},
