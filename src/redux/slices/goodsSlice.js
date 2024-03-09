@@ -15,7 +15,7 @@ const initialState = {
 	isError: false,
 }
 
-// Pagintaion fetch
+// Pagination fetch
 export const fetchPagination = createAsyncThunk(
 	'goods/fetchPagination',
 	async ({ offset, limit }, { rejectWithValue }) => {
@@ -53,45 +53,6 @@ export const fetchPagination = createAsyncThunk(
 	}
 )
 
-// Get all IDs and Products
-export const fetchGoods = createAsyncThunk(
-	'goods/fetchIds',
-	async (_, { rejectWithValue }) => {
-		try {
-			const getAllIds = await fetch('http://api.valantis.store:40000/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Auth': authorizationString,
-				},
-				body: JSON.stringify({
-					action: 'get_ids',
-					params: { limit: 30 },
-				}),
-			})
-
-			const allIds = await getAllIds.json()
-
-			const getAllGoods = await fetch('http://api.valantis.store:40000/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Auth': authorizationString,
-				},
-				body: JSON.stringify({
-					action: 'get_items',
-					params: { ids: allIds.result },
-				}),
-			})
-
-			const { result } = await getAllGoods.json()
-			return result
-		} catch (error) {
-			rejectWithValue(error)
-		}
-	}
-)
-
 // Get all Brands
 export const fetchBrands = createAsyncThunk(
 	'goods/fetchBrands',
@@ -121,7 +82,7 @@ const goodsSlice = createSlice({
 	initialState,
 	reducers: {
 		filter: (state, action) => {
-			// Если указан бренд
+			// По бренду
 			if (action.payload.brand) {
 				if (action.payload.brand === 'all') {
 					state.currentGoods = state.goods
@@ -132,7 +93,7 @@ const goodsSlice = createSlice({
 				}
 			}
 
-			// Если указана цена
+			// По цене
 			if (action.payload.price) {
 				if (action.payload.price === 'lower') {
 					state.currentGoods = state.currentGoods.sort(
@@ -145,10 +106,16 @@ const goodsSlice = createSlice({
 				}
 			}
 
+			// По имени
 			if (action.payload.name) {
-				state.currentGoods = state.currentGoods.filter((good) =>
-					good.name.toLowerCase().includes(action.payload.name.toLowerCase())
-				)
+				if (!action.payload.name) {
+					state.currentGoods = state.goods
+				} else {
+					state.currentGoods = state.goods.filter(({ product }) =>
+						product.includes(action.payload.name)
+					)
+					console.log(action.payload.name)
+				}
 			}
 		},
 	},
@@ -156,20 +123,23 @@ const goodsSlice = createSlice({
 		// Fetch all Brands
 		builder.addCase(fetchBrands.pending, (state, action) => {})
 		builder.addCase(fetchBrands.fulfilled, (state, action) => {
-			const { result } = action.payload
+			const { result } = action?.payload
 			const brands = result.filter((item) => item != null)
 			state.brands = brands
 		})
-		builder.addCase(fetchBrands.rejected, (state, action) => {})
+		builder.addCase(fetchBrands.rejected, (state, action) => {
+			console.log(action.error)
+		})
 
 		// Fetch pagination
 		builder.addCase(fetchPagination.pending, (state, action) => {
 			state.isLoading = true
 		})
 		builder.addCase(fetchPagination.fulfilled, (state, action) => {
+			state.isLoading = false
 			// Unique ids
 			const result = Object.values(
-				action.payload.reduce(
+				action?.payload.reduce(
 					(acc, n) => ((acc[n.id] = n.brand ? n : acc[n.id] || n), acc),
 					{}
 				)
@@ -177,13 +147,11 @@ const goodsSlice = createSlice({
 
 			state.goods = result
 			state.currentGoods = result
-			state.isLoading = false
-			console.log(action.payload)
 		})
 		builder.addCase(fetchPagination.rejected, (state, action) => {
+			console.log(action.error)
 			state.isLoading = false
 			state.isError = true
-			console.log(action.error)
 		})
 	},
 })

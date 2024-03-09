@@ -5,10 +5,8 @@ import { fetchPagination } from '../../redux/slices/goodsSlice'
 
 export default function PaginationComponent() {
 	const dispatch = useDispatch()
-	const products = useSelector((state) => state.goods.goods)
-	const [totalPages, setTotalPages] = useState(products.length)
 	const [currentPage, setCurrentPage] = useState(1)
-	const isLoading = useSelector((state) => state.goods.isLoading)
+	const { isLoading } = useSelector((state) => state.goods)
 
 	useEffect(() => {
 		const itemsPerPage = 50
@@ -39,7 +37,7 @@ export default function PaginationComponent() {
 				defaultCurrent={1}
 				total={500}
 				current={currentPage}
-				defaultPageSize={9}
+				defaultPageSize={50}
 				style={{ textAlign: 'center' }}
 				onChange={onChange}
 				disabled={isLoading}

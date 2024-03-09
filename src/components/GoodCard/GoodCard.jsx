@@ -1,12 +1,9 @@
 import styles from './GoodCard.module.sass'
 
-import { useDispatch, useSelector } from 'react-redux'
-
+import { useSelector } from 'react-redux'
 import { Spin } from 'antd'
 
 export default function GoodCard() {
-	const dispatch = useDispatch()
-
 	const { currentGoods, isLoading } = useSelector((state) => state.goods)
 
 	return (

@@ -1,16 +1,16 @@
 import './App.sass'
 
-import Header from './components/Header/Header'
-import GoodCard from './components/GoodCard/GoodCard'
-import Filter from './components/Filter/Filter'
+import { useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleVisible } from './redux/slices/filterSlice'
-
-import { FaArrowDownLong } from 'react-icons/fa6'
-import { useEffect } from 'react'
 import { fetchBrands } from './redux/slices/goodsSlice'
+
+import Header from './components/Header/Header'
+import GoodCard from './components/GoodCard/GoodCard'
+import Filter from './components/Filter/Filter'
 import PaginationComponent from './components/Pagination/Pagination'
+import { FaArrowDownLong } from 'react-icons/fa6'
 
 function App() {
 	const dispatch = useDispatch()

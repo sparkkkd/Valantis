@@ -1,20 +1,16 @@
-import { useState } from 'react'
-import Button from '../Button/Button'
 import styles from './Filter.module.sass'
 
-import { motion, AnimatePresence, easeInOut } from 'framer-motion'
-
-import { FaXmark } from 'react-icons/fa6'
 import { useSelector, useDispatch } from 'react-redux'
 import { toggleVisible } from '../../redux/slices/filterSlice'
 import { filter } from '../../redux/slices/goodsSlice'
 
+import { motion, AnimatePresence, easeInOut } from 'framer-motion'
+
+import Button from '../Button/Button'
+import { FaXmark } from 'react-icons/fa6'
+
 export default function Filter() {
 	const dispatch = useDispatch()
-	const [buttonActive, setButtonActive] = useState({
-		buttonLower: false,
-		buttonHigher: false,
-	})
 	const isVisible = useSelector((state) => state.filter.isVisible)
 	const brands = useSelector((state) => state.goods.brands)
 
@@ -70,6 +66,7 @@ export default function Filter() {
 							className={styles.filterSearch}
 							placeholder='Поиск...'
 							type='text'
+							onChange={(e) => dispatch(filter({ name: e.target.value }))}
 						/>
 					</div>
 
