@@ -20,7 +20,7 @@ export const fetchPagination = createAsyncThunk(
 	'goods/fetchPagination',
 	async ({ offset, limit }, { rejectWithValue }) => {
 		try {
-			const goodsIds = await fetch('https://api.valantis.store:4100/', {
+			const goodsIds = await fetch('https://api.valantis.store:41000/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export const fetchPagination = createAsyncThunk(
 
 			const { result } = await goodsIds.json()
 
-			const goods = await fetch('https://api.valantis.store:4100/', {
+			const goods = await fetch('https://api.valantis.store:41000/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
